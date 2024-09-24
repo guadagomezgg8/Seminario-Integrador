@@ -14,6 +14,7 @@ import { PermisoModule } from './permiso/permiso.module';
 import { ReservaModule } from './reserva/reserva.module';
 import { RolModule } from './rol/rol.module';
 import { UsuarioModule } from './usuario/usuario.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UsuarioModule } from './usuario/usuario.module';
     ReservaModule,
     RolModule,
     UsuarioModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, ComplejoResolver],

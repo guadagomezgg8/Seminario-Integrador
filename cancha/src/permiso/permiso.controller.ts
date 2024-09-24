@@ -2,33 +2,36 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PermisoService } from './permiso.service';
 import { CreatePermisoDto } from './dto/create-permiso.dto';
 import { UpdatePermisoDto } from './dto/update-permiso.dto';
+import { Permiso } from 'src/entities/permiso.entity';
 
 @Controller('permiso')
 export class PermisoController {
+
   constructor(private readonly permisoService: PermisoService) {}
 
   @Post()
-  create(@Body() createPermisoDto: CreatePermisoDto) {
-    return this.permisoService.create(createPermisoDto);
+  async create(@Body() createPermisoDto: CreatePermisoDto): Promise<Permiso> {
+    return await this.permisoService.create(createPermisoDto);
   }
 
   @Get()
-  findAll() {
-    return this.permisoService.findAll();
+  async findAll(): Promise<Permiso[]> {
+    return await this.permisoService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.permisoService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<Permiso> {
+    return await this.permisoService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePermisoDto: UpdatePermisoDto) {
-    return this.permisoService.update(+id, updatePermisoDto);
+  async update(@Param('id') id: number, @Body() updatePermisoDto: UpdatePermisoDto): Promise<Permiso> {
+    return await this.permisoService.update(id, updatePermisoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.permisoService.remove(+id);
+  async remove(@Param('id') id: number): Promise<void> {
+    return await this.permisoService.remove(id);
   }
+  
 }

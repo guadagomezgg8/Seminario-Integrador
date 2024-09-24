@@ -2,33 +2,35 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { LocalidadService } from './localidad.service';
 import { CreateLocalidadDto } from './dto/create-localidad.dto';
 import { UpdateLocalidadDto } from './dto/update-localidad.dto';
+import { Localidad } from 'src/entities/localidad.entity';
 
 @Controller('localidad')
 export class LocalidadController {
+
   constructor(private readonly localidadService: LocalidadService) {}
 
   @Post()
-  create(@Body() createLocalidadDto: CreateLocalidadDto) {
-    return this.localidadService.create(createLocalidadDto);
+  async create(@Body() createLocalidadDto: CreateLocalidadDto): Promise<Localidad> {
+    return await this.localidadService.create(createLocalidadDto);
   }
 
   @Get()
-  findAll() {
-    return this.localidadService.findAll();
+  async findAll(): Promise<Localidad[]> {
+    return await this.localidadService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.localidadService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<Localidad> {
+    return await this.localidadService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLocalidadDto: UpdateLocalidadDto) {
-    return this.localidadService.update(+id, updateLocalidadDto);
+  async update(@Param('id') id: number, @Body() updateLocalidadDto: UpdateLocalidadDto): Promise<Localidad> {
+    return await this.localidadService.update(id, updateLocalidadDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.localidadService.remove(+id);
+  async remove(@Param('id') id: number): Promise<void> {
+    return await this.localidadService.remove(id);
   }
 }

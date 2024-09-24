@@ -19,7 +19,7 @@ export class Complejo extends BaseEntity {
   direccion: string;
 
   @ManyToOne(()=>Localidad,(localidad)=>localidad.complejos)
-  localidad: Localidad[];
+  localidad: Localidad;
 
   @Column()
   rangoHorario: string[];

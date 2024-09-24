@@ -1,1 +1,3 @@
-export class CreateLocalidadDto {}
+export class CreateLocalidadDto {
+  nombre: string;
+}

@@ -29,7 +29,7 @@ export class CanchaService {
   async update(id: number, updateCanchaDto: UpdateCanchaDto): Promise<Cancha> {
     const cancha = await this.canchaRepository.findOneBy({id});
     if (!cancha) {
-      throw new NotFoundException('Ejercicio no encontrado');
+      throw new NotFoundException('Cancha no encontrada');
     }
 
     // Filtrar las propiedades del DTO que están definidas
