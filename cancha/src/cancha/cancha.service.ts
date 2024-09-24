@@ -4,17 +4,27 @@ import { UpdateCanchaDto } from './dto/update-cancha.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cancha } from '../entities/cancha.entity';
+import { Complejo } from 'src/entities/complejo.entity';
 
 @Injectable()
 export class CanchaService {
 
   constructor(
     @InjectRepository(Cancha)
-    private readonly canchaRepository: Repository<Cancha>
+    private readonly canchaRepository: Repository<Cancha>,
+    @InjectRepository(Complejo)
+    private readonly complejoRepository: Repository<Complejo>,
   ) {}
 
   async create(createCanchaDto: CreateCanchaDto): Promise<Cancha> {
-    const cancha = this.canchaRepository.create(createCanchaDto);
+    const complejo = await this.complejoRepository.findOneBy({id: createCanchaDto.complejoId});
+    if (!complejo) {
+      throw new NotFoundException('Complejo no encontrado');
+    }
+    const cancha = this.canchaRepository.create({
+      ...createCanchaDto,
+      complejo,
+    });
     return await this.canchaRepository.save(cancha);
   }
 

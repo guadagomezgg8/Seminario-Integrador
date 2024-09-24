@@ -1,5 +1,4 @@
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { DetalleRol } from "./detalleRol.entity";
+import { BaseEntity, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Complejo } from "./complejo.entity";
 import { Disponibilidad } from "./disponibilidad.entity";
 import { Reserva } from "./reserva.entity";
@@ -22,12 +21,10 @@ export class Cancha extends BaseEntity {
   @Column()
   precio: number;
 
-  @OneToMany(()=>DetalleRol,(detalleRol)=>detalleRol.cancha)
-  detallesRol: DetalleRol[];
-
   @ManyToOne(()=>Complejo,(complejo)=>complejo.canchas)
   complejo: Complejo;
 
+  @JoinTable()
   @ManyToMany(()=>Disponibilidad,(disponibilidad)=>disponibilidad.canchas)
   disponibilidades: Disponibilidad[];
 

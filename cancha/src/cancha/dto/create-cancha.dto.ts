@@ -3,4 +3,5 @@ export class CreateCanchaDto {
   tipo: string;
   descripcion: string;
   precio: number;
+  complejoId: number;
 }

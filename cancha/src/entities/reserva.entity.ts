@@ -19,12 +19,12 @@ export class Reserva extends BaseEntity {
   horaFin: string;
 
   @ManyToOne(()=>Cancha,(cancha)=>cancha.reservas)
-  cancha: Cancha[];
+  cancha: Cancha;
 
   @ManyToOne(()=>Usuario,(usuario)=>usuario.reservas)
   cliente: Usuario;
 
   @ManyToOne(()=>Estado,(estado)=>estado.reservas)
-  estado: Estado[];
+  estado: Estado;
 
 }

@@ -22,7 +22,7 @@ export class Complejo extends BaseEntity {
   localidad: Localidad;
 
   @Column()
-  rangoHorario: string[];
+  rangoHorario: string;
 
   @OneToMany(()=>DetalleRol,(detalleRol)=>detalleRol.complejo)
   detallesRol: DetalleRol[];

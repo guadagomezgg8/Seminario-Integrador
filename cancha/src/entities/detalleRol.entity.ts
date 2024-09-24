@@ -10,9 +10,6 @@ export class DetalleRol extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(()=>Cancha,(cancha)=>cancha.detallesRol)
-  cancha: Cancha;
-
   @ManyToOne(()=>Complejo,(complejo)=>complejo.detallesRol)
   complejo: Complejo;
 

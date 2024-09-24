@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { entities } from './entities';
 import { CanchaModule } from './cancha/cancha.module';
-import { ComplejoResolver } from './complejo/complejo.resolver';
 import { ComplejoModule } from './complejo/complejo.module';
 import { DetalleRolModule } from './detalle-rol/detalle-rol.module';
 import { DisponibilidadModule } from './disponibilidad/disponibilidad.module';
@@ -15,9 +14,11 @@ import { ReservaModule } from './reserva/reserva.module';
 import { RolModule } from './rol/rol.module';
 import { UsuarioModule } from './usuario/usuario.module';
 import { AuthModule } from './auth/auth.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(), // Módulo para tareas programadas
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'canchas.db',
@@ -37,6 +38,6 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ComplejoResolver],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -21,7 +21,6 @@ export class ComplejoService {
     const complejo = this.complejoRepository.create({
       ...createComplejoDto,
       localidad,
-      canchas: [],
     });
     return await this.complejoRepository.save(complejo);
   }
@@ -31,7 +30,7 @@ export class ComplejoService {
   }
 
   async findOne(id: number): Promise<Complejo> {
-    return await this.complejoRepository.findOneBy({id});
+    return await this.complejoRepository.findOne({where: {id}, relations: ['canchas']});
   }
 
   async update(id: number, updateComplejoDto: UpdateComplejoDto): Promise<Complejo> {
