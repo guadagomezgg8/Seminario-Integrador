@@ -8,7 +8,7 @@ export class Disponibilidad extends BaseEntity {
   id: number;
 
   @Column()
-  fecha: Date;
+  fecha: string;
 
   @Column()
   horaInicio: string;

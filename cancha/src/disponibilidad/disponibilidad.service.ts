@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDisponibilidadDto } from './dto/create-disponibilidad.dto';
-import { UpdateDisponibilidadDto } from './dto/update-disponibilidad.dto';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Disponibilidad } from 'src/entities/disponibilidad.entity';
@@ -20,12 +18,12 @@ export class DisponibilidadService {
     private readonly canchaRepository: Repository<Cancha>,
   ) {}
 
-  @Cron('0 0 * * *') 
+  @Cron('0 0 * * *') // Se repite todos los días a las 00:00 hs
   async generarDisponibilidadesParaTodosLosComplejos(): Promise<void> {
     try {
       const complejos = await this.complejoRepository.find({relations: ['canchas']});
 
-      const fecha = new Date(); 
+      let fecha = new Date();
       fecha.setMonth(fecha.getMonth() + 1);
 
       for (const complejo of complejos) {
@@ -36,12 +34,12 @@ export class DisponibilidadService {
           const horaFin = `${hora + 1}:00`;
 
           // Verifica si la disponibilidad ya existe
-          let disponibilidadExistente = await this.disponibilidadRepository.findOne({where: {fecha, horaInicio, horaFin}});
+          let disponibilidadExistente = await this.disponibilidadRepository.findOne({where: {fecha: fecha.toString().substring(0,10), horaInicio, horaFin}});
 
           // Si no existe, la creamos
           if (!disponibilidadExistente) {
             disponibilidadExistente = this.disponibilidadRepository.create({
-              fecha,
+              fecha: fecha.toString().substring(0,10),
               horaInicio,
               horaFin,
             });
@@ -65,23 +63,4 @@ export class DisponibilidadService {
     }
   }
 
-  create(createDisponibilidadDto: CreateDisponibilidadDto) {
-    return 'This action adds a new disponibilidad';
-  }
-
-  findAll() {
-    return `This action returns all disponibilidad`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} disponibilidad`;
-  }
-
-  update(id: number, updateDisponibilidadDto: UpdateDisponibilidadDto) {
-    return `This action updates a #${id} disponibilidad`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} disponibilidad`;
-  }
 }
