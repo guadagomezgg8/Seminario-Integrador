@@ -33,4 +33,5 @@ export class ComplejoController {
   async remove(@Param('id') id: number): Promise<void> {
     return await this.complejoService.remove(id);
   }
+  
 }

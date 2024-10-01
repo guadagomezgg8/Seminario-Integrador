@@ -10,7 +10,7 @@ export class Reserva extends BaseEntity {
   id: number;
 
   @Column()
-  fecha: Date;
+  fecha: string;
 
   @Column()
   horaInicio: string;

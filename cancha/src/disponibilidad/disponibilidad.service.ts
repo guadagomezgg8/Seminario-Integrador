@@ -18,7 +18,7 @@ export class DisponibilidadService {
     private readonly canchaRepository: Repository<Cancha>,
   ) {}
 
-  @Cron('0 0 * * *') // Se repite todos los días a las 00:00 hs
+  @Cron('3 11 * * *') // Se repite todos los días a las 00:00 hs
   async generarDisponibilidadesParaTodosLosComplejos(): Promise<void> {
     try {
       const complejos = await this.complejoRepository.find({relations: ['canchas']});
@@ -34,12 +34,12 @@ export class DisponibilidadService {
           const horaFin = `${hora + 1}:00`;
 
           // Verifica si la disponibilidad ya existe
-          let disponibilidadExistente = await this.disponibilidadRepository.findOne({where: {fecha: fecha.toString().substring(0,10), horaInicio, horaFin}});
+          let disponibilidadExistente = await this.disponibilidadRepository.findOne({where: {fecha: fecha.toISOString().substring(0,10), horaInicio, horaFin}});
 
           // Si no existe, la creamos
           if (!disponibilidadExistente) {
             disponibilidadExistente = this.disponibilidadRepository.create({
-              fecha: fecha.toString().substring(0,10),
+              fecha: fecha.toISOString().substring(0,10),
               horaInicio,
               horaFin,
             });

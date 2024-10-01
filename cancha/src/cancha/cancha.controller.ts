@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CanchaService } from './cancha.service';
 import { CreateCanchaDto } from './dto/create-cancha.dto';
 import { UpdateCanchaDto } from './dto/update-cancha.dto';
@@ -32,4 +32,15 @@ export class CanchaController {
   async remove(@Param('id') id: number): Promise<void> {
     return await this.canchaService.remove(id);
   }
+
+  @Get('disponibles')
+  async obtenerCanchasDisponibles(
+    @Query('fecha') fecha: string,
+    @Query('horaInicio') horaInicio: string,
+    @Query('horaFin') horaFin: string,
+    @Query('tipoCancha') tipoCancha: string
+  ): Promise<Cancha[]> {
+    return await this.canchaService.obtenerCanchasDisponibles(fecha, horaInicio, horaFin, tipoCancha);
+  }
+
 }
