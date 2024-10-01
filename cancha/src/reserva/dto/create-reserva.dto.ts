@@ -3,5 +3,4 @@ export class CreateReservaDto {
   horaInicio: string;
   horaFin: string;
   canchaId: number;
-  clienteId: number;
 }

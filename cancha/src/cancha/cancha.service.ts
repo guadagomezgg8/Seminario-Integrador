@@ -31,12 +31,8 @@ export class CanchaService {
     return await this.canchaRepository.save(cancha);
   }
 
-  async findAll(): Promise<Cancha[]> {
-    return await this.canchaRepository.find();
-  }
-
   async findOne(id: number): Promise<Cancha> {
-    return await this.canchaRepository.findOneBy({id});
+    return await this.canchaRepository.findOne({where: {id}, relations:['disponibilidades']});
   }
 
   async update(id: number, updateCanchaDto: UpdateCanchaDto): Promise<Cancha> {
@@ -67,37 +63,45 @@ export class CanchaService {
     await this.canchaRepository.remove(cancha);
   }
 
-  async obtenerCanchasDisponibles(fecha?: string, horaInicio?: string, horaFin?: string, tipo?: string): Promise<Cancha[]> {
-    let canchasFiltradas = await this.canchaRepository.find({relations: ['disponibilidades']});
-    console.log(canchasFiltradas)
+  async obtenerCanchasDisponibles(complejoId: number, fecha?: string, horaInicio?: string, horaFin?: string, tipo?: string): Promise<Cancha[]> {
+
+    let canchasFiltradas = await this.canchaRepository.find({relations: ['disponibilidades', 'complejo']});
+
+    if (complejoId) {
+      canchasFiltradas = canchasFiltradas.filter(cancha => cancha.complejo.id === Number(complejoId));
+    }
     
     if (fecha) {
       canchasFiltradas = canchasFiltradas.filter(cancha => 
         cancha.disponibilidades.some(disponibilidad => disponibilidad.fecha === fecha)
       );
     }
-    console.log(canchasFiltradas)
     
     if (horaInicio) {
+      const horaInicioNum = this.convertirHoraAInt(horaInicio);
       canchasFiltradas = canchasFiltradas.filter(cancha => 
-        cancha.disponibilidades.some(disponibilidad => disponibilidad.horaInicio >= horaInicio)
+        cancha.disponibilidades.some(disponibilidad => this.convertirHoraAInt(disponibilidad.horaInicio) >= horaInicioNum)
       );
     }
-    console.log(canchasFiltradas)
-
+  
     if (horaFin) {
+      const horaFinNum = this.convertirHoraAInt(horaFin);
       canchasFiltradas = canchasFiltradas.filter(cancha => 
-        cancha.disponibilidades.some(disponibilidad => disponibilidad.horaFin <= horaFin)
+        cancha.disponibilidades.some(disponibilidad => this.convertirHoraAInt(disponibilidad.horaFin) <= horaFinNum)
       );
     }
-    console.log(canchasFiltradas)
     
     if (tipo) {
       canchasFiltradas = canchasFiltradas.filter(cancha => cancha.tipo === tipo);
     }
-    console.log(canchasFiltradas)
     
     return canchasFiltradas;
   }
+
+  private convertirHoraAInt(hora: string): number {
+    const [horas, minutos] = hora.split(':').map(Number);
+    return horas * 60 + minutos;
+  }
+  
   
 }
