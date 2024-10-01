@@ -35,12 +35,12 @@ export class CanchaController {
 
   @Get('disponibles')
   async obtenerCanchasDisponibles(
-    @Query('fecha') fecha: string,
-    @Query('horaInicio') horaInicio: string,
-    @Query('horaFin') horaFin: string,
-    @Query('tipoCancha') tipoCancha: string
-  ): Promise<Cancha[]> {
-    return await this.canchaService.obtenerCanchasDisponibles(fecha, horaInicio, horaFin, tipoCancha);
+    @Query('fecha') fecha?: string, 
+    @Query('horaInicio') horaInicio?: string, 
+    @Query('horafin') horafin?: string, 
+    @Query('tipo') tipo?: string): Promise<Cancha[]> {
+      console.log('Endpoint');
+      return await this.canchaService.obtenerCanchasDisponibles(fecha, horaInicio, horafin, tipo);
   }
 
 }

@@ -67,55 +67,37 @@ export class CanchaService {
     await this.canchaRepository.remove(cancha);
   }
 
-  async obtenerCanchasDisponibles(fecha: string, horaInicio: string, horaFin: string, tipoCancha: string): Promise<Cancha[]> {
-    try {
-      console.log("ejecutando");
-      // Obtener todas las canchas con sus disponibilidades
-      const canchas = await this.canchaRepository.find({relations: ['disponibilidades']});
-      console.log(canchas);
-  
-      const canchasDisponibles: Cancha[] = [];
-  
-      // Filtramos las canchas según los filtros aplicables
-      for (const cancha of canchas) {
-        const disponibilidadesValidas = cancha.disponibilidades.filter(disponibilidad => {
-          // Verifica si se debe filtrar por fecha
-          const mismaFecha = fecha ? this.sonMismaFecha(disponibilidad.fecha, fecha) : true;
-          console.log(mismaFecha);
-
-          // Verifica si se debe filtrar por horario
-          const disponibilidadDentroHorario = (horaInicio && horaFin) ?
-            (disponibilidad.horaInicio >= horaInicio && disponibilidad.horaFin <= horaFin) : true;
-          console.log(mismaFecha);
-
-          // Verifica si se debe filtrar por tipo de cancha
-          const tipoCanchaValido = tipoCancha ? cancha.tipo === tipoCancha : true;
-          console.log(mismaFecha);
-
-          return mismaFecha && disponibilidadDentroHorario && tipoCanchaValido;
-        });
-  
-        console.log(disponibilidadesValidas);
-        if (disponibilidadesValidas.length > 0) {
-          canchasDisponibles.push(cancha);
-        }
-      }
-      console.log(canchasDisponibles);
-  
-      return canchasDisponibles;
-  
-    } catch (error) {
-      console.error('Error obteniendo canchas disponibles:', error);
-      throw new Error('No se pudieron obtener las canchas disponibles.');
+  async obtenerCanchasDisponibles(fecha?: string, horaInicio?: string, horaFin?: string, tipo?: string): Promise<Cancha[]> {
+    let canchasFiltradas = await this.canchaRepository.find({relations: ['disponibilidades']});
+    console.log(canchasFiltradas)
+    
+    if (fecha) {
+      canchasFiltradas = canchasFiltradas.filter(cancha => 
+        cancha.disponibilidades.some(disponibilidad => disponibilidad.fecha === fecha)
+      );
     }
-  }
-  
-  private sonMismaFecha(fecha1: string, fecha2: string): boolean {
-    // Extraer día, mes y año de las fechas en formato 'YYYY-MM-DD'
-    const [año1, mes1, dia1] = fecha1.split('-').map(Number);
-    const [año2, mes2, dia2] = fecha2.split('-').map(Number);
-  
-    return (año1 === año2 && mes1 === mes2 && dia1 === dia2);
+    console.log(canchasFiltradas)
+    
+    if (horaInicio) {
+      canchasFiltradas = canchasFiltradas.filter(cancha => 
+        cancha.disponibilidades.some(disponibilidad => disponibilidad.horaInicio >= horaInicio)
+      );
+    }
+    console.log(canchasFiltradas)
+
+    if (horaFin) {
+      canchasFiltradas = canchasFiltradas.filter(cancha => 
+        cancha.disponibilidades.some(disponibilidad => disponibilidad.horaFin <= horaFin)
+      );
+    }
+    console.log(canchasFiltradas)
+    
+    if (tipo) {
+      canchasFiltradas = canchasFiltradas.filter(cancha => cancha.tipo === tipo);
+    }
+    console.log(canchasFiltradas)
+    
+    return canchasFiltradas;
   }
   
 }
