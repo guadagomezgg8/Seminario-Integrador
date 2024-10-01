@@ -13,10 +13,6 @@ export class CanchaController {
     return await this.canchaService.create(createCanchaDto);
   }
 
-  @Get()
-  async findAll(): Promise<Cancha[]> {
-    return await this.canchaService.findAll();
-  }
 
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Cancha> {
@@ -33,7 +29,7 @@ export class CanchaController {
     return await this.canchaService.remove(id);
   }
 
-  @Get('disponibles')
+  @Get()
   async obtenerCanchasDisponibles(
     @Query('fecha') fecha?: string, 
     @Query('horaInicio') horaInicio?: string, 
