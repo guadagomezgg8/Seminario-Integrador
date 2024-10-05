@@ -1,15 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RolService } from './rol.service';
 import { CreateRolDto } from './dto/create-rol.dto';
 import { UpdateRolDto } from './dto/update-rol.dto';
+import { Rol } from 'src/entities/rol.entity';
 
 @Controller('rol')
 export class RolController {
   constructor(private readonly rolService: RolService) {}
 
   @Post()
-  create(@Body() createRolDto: CreateRolDto) {
-    return this.rolService.create(createRolDto);
+  async create(@Body() createRolDto: CreateRolDto): Promise<Rol> {
+    return await this.rolService.create(createRolDto);
   }
 
   @Get()

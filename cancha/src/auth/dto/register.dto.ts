@@ -1,4 +1,4 @@
-export class CreateUsuarioDto {
+export class RegisterDto {
   email: string;
   contrasena: string;
   nombre: string;
@@ -6,5 +6,4 @@ export class CreateUsuarioDto {
   telefono: string;
   direccion: string;
   localidad: string;
-  rol?: string;
 }

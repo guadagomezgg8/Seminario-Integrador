@@ -1,4 +1,12 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Param,
+  Get,
+  Request,
+} from '@nestjs/common';
 import { ReservaService } from './reserva.service';
 import { Reserva } from 'src/entities/reserva.entity';
 import { CreateReservaDto } from './dto/create-reserva.dto';
@@ -17,5 +25,21 @@ export class ReservaController {
       usuarioId,
       createReservaDto,
     );
+  }
+
+  @Delete(':id')
+  async cancelarReserva(@Param('id') reservaId: number): Promise<void> {
+    await this.reservaService.cancelarReserva(reservaId);
+  }
+
+  @Get(':id')
+  async consultarReserva(@Param('id') reservaId: number): Promise<Reserva> {
+    return await this.reservaService.consultarReserva(reservaId);
+  }
+
+  @Get()
+  async consultarReservas(@Request() req: any): Promise<Reserva[]> {
+    const usuarioId = req.user.id; // Obtén el ID del usuario del token
+    return await this.reservaService.consultarReservasPorUsuario(usuarioId);
   }
 }
