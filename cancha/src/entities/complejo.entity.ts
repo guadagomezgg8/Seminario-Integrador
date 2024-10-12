@@ -1,11 +1,17 @@
-import { BaseEntity, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { DetalleRol } from "./detalleRol.entity";
-import { Cancha } from "./cancha.entity";
-import { Localidad } from "./localidad.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Cancha } from './cancha.entity';
+import { Localidad } from './localidad.entity';
+import { Usuario } from './usuario.entity';
 
 @Entity('complejo')
 export class Complejo extends BaseEntity {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,16 +24,15 @@ export class Complejo extends BaseEntity {
   @Column()
   direccion: string;
 
-  @ManyToOne(()=>Localidad,(localidad)=>localidad.complejos)
+  @ManyToOne(() => Localidad, (localidad) => localidad.complejos)
   localidad: Localidad;
 
   @Column()
   rangoHorario: string;
 
-  @OneToMany(()=>DetalleRol,(detalleRol)=>detalleRol.complejo)
-  detallesRol: DetalleRol[];
+  @OneToMany(() => Usuario, (usuario) => usuario.complejos)
+  administrador: Usuario[];
 
-  @OneToMany(()=>Cancha,(cancha)=>cancha.complejo)
+  @OneToMany(() => Cancha, (cancha) => cancha.complejo)
   canchas: Cancha[];
-
 }
