@@ -1,9 +1,14 @@
-import { BaseEntity, Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Cancha } from "./cancha.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Cancha } from './cancha.entity';
 
 @Entity('disponibilidad')
 export class Disponibilidad extends BaseEntity {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -16,7 +21,6 @@ export class Disponibilidad extends BaseEntity {
   @Column()
   horaFin: string;
 
-  @ManyToMany(()=>Cancha,(cancha)=>cancha.disponibilidades)
+  @ManyToMany(() => Cancha, (cancha) => cancha.disponibilidades)
   canchas: Cancha[];
-
 }

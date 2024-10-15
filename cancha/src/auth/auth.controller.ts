@@ -12,6 +12,8 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { AuthGuard } from './auth.guard';
+import { RequestWithUser } from './interfaces/interface.requestWithUser';
+import { Roles } from './decorators/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -29,8 +31,13 @@ export class AuthController {
   }
 
   @Get('profile')
+  @Roles('Cliente')
   @UseGuards(AuthGuard)
-  profile(@Request() req) {
-    return req.user;
+  @UseGuards(AuthGuard)
+  profile(
+    @Request()
+    req: RequestWithUser,
+  ) {
+    return req.usuario;
   }
 }

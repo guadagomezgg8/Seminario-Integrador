@@ -1,11 +1,16 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Cancha } from "./cancha.entity";
-import { Usuario } from "./usuario.entity";
-import { Estado } from "./estado.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Cancha } from './cancha.entity';
+import { Usuario } from './usuario.entity';
+import { Estado } from './estado.entity';
 
 @Entity('reserva')
 export class Reserva extends BaseEntity {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -18,13 +23,12 @@ export class Reserva extends BaseEntity {
   @Column()
   horaFin: string;
 
-  @ManyToOne(()=>Cancha,(cancha)=>cancha.reservas)
+  @ManyToOne(() => Cancha, (cancha) => cancha.reservas)
   cancha: Cancha;
 
-  @ManyToOne(()=>Usuario,(usuario)=>usuario.reservas)
+  @ManyToOne(() => Usuario, (usuario) => usuario.reservas)
   cliente: Usuario;
 
-  @ManyToOne(()=>Estado,(estado)=>estado.reservas)
+  @ManyToOne(() => Estado, (estado) => estado.reservas)
   estado: Estado;
-
 }

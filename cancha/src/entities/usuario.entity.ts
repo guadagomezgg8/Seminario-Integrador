@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 import { Localidad } from './localidad.entity';
 import { Rol } from './rol.entity';
-import { DetalleRol } from './detalleRol.entity';
 import { Reserva } from './reserva.entity';
+import { Complejo } from './complejo.entity';
 
 @Entity('usuario')
 export class Usuario extends BaseEntity {
@@ -37,13 +37,13 @@ export class Usuario extends BaseEntity {
   @ManyToOne(() => Localidad, (localidad) => localidad.usuarios)
   localidad: Localidad;
 
-  @ManyToOne(() => Rol, (rol) => rol.usuarios, { nullable: true })
-  rol?: Rol;
+  @ManyToOne(() => Rol, (rol) => rol.usuarios)
+  rol: Rol;
 
-  @OneToMany(() => DetalleRol, (detalleRol) => detalleRol.usuario, {
+  @OneToMany(() => Complejo, (complejo) => complejo.administrador, {
     nullable: true,
   })
-  complejos?: DetalleRol[];
+  complejos?: Complejo[];
 
   @OneToMany(() => Reserva, (reserva) => reserva.cliente, { nullable: true })
   reservas?: Reserva[];

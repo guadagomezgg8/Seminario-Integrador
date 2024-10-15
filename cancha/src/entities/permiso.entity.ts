@@ -1,9 +1,14 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
-import { Rol } from "./rol.entity";
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+} from 'typeorm';
+import { Rol } from './rol.entity';
 
 @Entity('permiso')
 export class Permiso extends BaseEntity {
-  
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,7 +18,6 @@ export class Permiso extends BaseEntity {
   @Column()
   descripcion: string;
 
-  @ManyToMany(()=>Rol,(rol)=>rol.permisos)
+  @ManyToMany(() => Rol, (rol) => rol.permisos)
   roles: Rol[];
-
 }
