@@ -22,7 +22,7 @@ const LayoutSinNavbar = ({ children }) => {
         padding: '1rem',
         fontSize: '0.875rem',
       }}>
-        © 2023 FutBooking - Todos los derechos reservados
+        © 2024 FutBooking - Todos los derechos reservados
       </footer>
     </div>
   );
