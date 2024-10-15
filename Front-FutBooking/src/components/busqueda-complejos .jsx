@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const BusquedaComplejos = ({ onVolver }) => {
+const BusquedaComplejos = () => {
   const [busqueda, setBusqueda] = useState('');
   const [tipoBusqueda, setTipoBusqueda] = useState('nombre');
   const [, setComplejos] = useState([]);
@@ -255,63 +255,159 @@ const BusquedaComplejos = ({ onVolver }) => {
       </div>
 
       {complejoSeleccionado && (
-        <div style={styles.complejoItem}>
-          <div style={styles.complejoContent}>
-            <div style={styles.complejoImage}>
-              <img src={complejoSeleccionado.foto} alt={complejoSeleccionado.nombre} style={styles.image} />
-            </div>
-            <div style={styles.complejoInfo}>
-              <h2 style={styles.complejoTitle}>{complejoSeleccionado.nombre}</h2>
-              <p>{complejoSeleccionado.descripcion}</p>
-              <p>{complejoSeleccionado.direccion}</p>
+        <div>
+          <h2 style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            marginBottom: '1rem'
+          }}>
+            Detalles del Complejo
+          </h2>
+          <div style={styles.complejoItem}>
+            <div style={styles.complejoContent}>
+              <div style={styles.complejoImage}>
+                <img
+                  src={complejoSeleccionado.foto}
+                  alt={`Vista de ${complejoSeleccionado.nombre}`}
+                  style={styles.image}
+                />
+              </div>
+              <div style={styles.complejoInfo}>
+                <h3 style={styles.complejoTitle}>{complejoSeleccionado.nombre}</h3>
+                <p><strong>Descripción:</strong> {complejoSeleccionado.descripcion}</p>
+                <p><strong>Dirección:</strong> {complejoSeleccionado.direccion}</p>
+                <p><strong>Ubicación:</strong> {complejoSeleccionado.ubicacion}</p>
+              </div>
             </div>
           </div>
-          <h3>Cancha disponible</h3>
+
+          <h2 style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            marginBottom: '1rem',
+            marginTop: '2rem'
+          }}>
+            Canchas de {complejoSeleccionado.nombre}
+          </h2>
           {complejoSeleccionado.canchas.map(cancha => (
-            <div key={cancha.id} style={styles.complejoItem}>
-              <h4>{cancha.nombre}</h4>
-              <p>{cancha.descripcion}</p>
-              <p>Precio: ${cancha.precio}</p>
-              <h5>Seleccione una fecha:</h5>
-              <input
-                type="date"
-                onChange={(e) => handleFechaChange(cancha.id, e.target.value)}
-              />
-              <h5>Seleccione un turno:</h5>
-              {cancha.turnos.map(turno => (
-                <button
-                  key={turno}
-                  onClick={() => handleTurnoClick(cancha.id, turno)}
-                  style={styles.button}
-                >
-                  {turno}
-                </button>
-              ))}
-              <button onClick={() => handleReservar(cancha.id)} style={styles.button}>
-                Reservar
-              </button>
+            <div
+              key={cancha.id}
+              style={{
+                backgroundColor: 'white',
+                borderRadius: '0.5rem',
+                padding: '1.5rem',
+                marginBottom: '1rem',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+              }}
+            >
+              <div style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '1.5rem'
+              }}>
+                <div style={{ flex: '0 0 33.333333%' }}>
+                  <img
+                    src={cancha.foto}
+                    alt={`Vista de ${cancha.nombre}`}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      borderRadius: '0.375rem',
+                      objectFit: 'cover'
+                    }}
+                  />
+                </div>
+                <div style={{ flex: '0 0 66.666667%' }}>
+                  <h3 style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 'bold',
+                    marginBottom: '0.5rem'
+                  }}>{cancha.nombre}</h3>
+                  <p><strong>Descripción:</strong> {cancha.descripcion}</p>
+                  <p><strong>Precio:</strong> ${cancha.precio}</p>
+                  <div style={{ marginTop: '1rem' }}>
+                    <label htmlFor={`fecha-${cancha.id}`} style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+                      Selecciona una fecha:
+                    </label>
+                    <input
+                      type="date"
+                      id={`fecha-${cancha.id}`}
+                      onChange={(e) => handleFechaChange(cancha.id, e.target.value)}
+                      style={{
+                        width: '80%',
+                        padding: '0.5rem',
+                        marginBottom: '1rem',
+                        borderRadius: '0.25rem',
+                        border: '1px solid #d1d5db'
+                      }}
+                    />
+                    <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Turnos disponibles:</p>
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '0.5rem'
+                    }}>
+                      {cancha.turnos.map(turno => (
+                        <button
+                          key={turno}
+                          onClick={() => handleTurnoClick(cancha.id, turno)}
+                          style={{
+                            padding: '0.5rem 1rem',
+                            borderRadius: '0.25rem',
+                            backgroundColor: reservas[cancha.id]?.turno === turno ? '#16a34a' : '#e5e7eb',
+                            color: reservas[cancha.id]?.turno === turno ? 'white' : 'black',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {turno}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleReservar(cancha.id)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      backgroundColor: '#16a34a',
+                      color: 'white',
+                      borderRadius: '0.375rem',
+                      fontSize: '1.125rem',
+                      fontWeight: '600',
+                      border: 'none',
+                      cursor: 'pointer',
+                
+                      marginTop: '1rem'
+                    }}
+                  >
+                    Reservar
+                  </button>
+                </div>
+              </div>
             </div>
           ))}
+          <button
+            onClick={() => {
+              setComplejoSeleccionado(null);
+              setBusqueda('');
+            }}
+            style={{
+              padding: '0.75rem 1rem',
+              backgroundColor: '#4b5563',
+              color: 'white',
+              borderRadius: '0.375rem',
+              fontSize: '1rem',
+              fontWeight: '600',
+              border: 'none',
+              cursor: 'pointer',
+              marginTop: '1rem'
+            }}
+          >
+            Volver a la búsqueda
+          </button>
         </div>
       )}
-
-      {/* Botón de Volver */}
-      <button
-        onClick={onVolver} // Llama a la función de navegación al hacer clic
-        style={{
-          padding: '0.75rem 1rem',
-          backgroundColor: '#4b5563',
-          color: 'white',
-          borderRadius: '0.375rem',
-          fontSize: '1rem',
-          fontWeight: '600',
-          border: 'none',
-          cursor: 'pointer',
-          marginTop: '1rem'
-        }}
-      >
-        Volver
-      </button>
     </div>
   );
 };
