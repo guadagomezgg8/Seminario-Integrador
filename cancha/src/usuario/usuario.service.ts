@@ -79,6 +79,9 @@ export class UsuarioService {
   }
 
   async findOneByEmail(email: string) {
-    return await this.usuarioRepository.findOneBy({ email });
+    return this.usuarioRepository.findOne({
+      where: { email },
+      relations: ['rol'], // Asegúrate de incluir la relación con rol
+    });
   }
 }

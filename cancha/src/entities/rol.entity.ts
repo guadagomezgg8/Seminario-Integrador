@@ -7,7 +7,6 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Usuario } from './usuario.entity';
-import { Permiso } from './permiso.entity';
 
 @Entity('rol')
 export class Rol extends BaseEntity {
@@ -17,8 +16,8 @@ export class Rol extends BaseEntity {
   @Column()
   nombre: string;
 
-  @ManyToMany(() => Permiso, (permiso) => permiso.roles)
-  permisos: Permiso[];
+  @Column()
+  descripcion: string;
 
   @OneToMany(() => Usuario, (usuario) => usuario.rol)
   usuarios: Usuario[];

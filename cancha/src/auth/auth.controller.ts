@@ -14,14 +14,15 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthGuard } from './auth.guard';
 import { RequestWithUser } from './interfaces/interface.requestWithUser';
 import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './roles.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('registerCliente')
+  @Post('register')
   register(@Body() registerDto: RegisterDto) {
-    return this.authService.registerCliente(registerDto);
+    return this.authService.register(registerDto);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -30,10 +31,10 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+  // Solo los usuarios autenticados con el rol 'Cliente' pueden acceder
   @Get('profile')
   @Roles('Cliente')
-  @UseGuards(AuthGuard)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard) // Primero el AuthGuard, luego el RolesGuard
   profile(
     @Request()
     req: RequestWithUser,

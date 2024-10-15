@@ -6,4 +6,5 @@ export class RegisterDto {
   telefono: string;
   direccion: string;
   localidad: string;
+  rol: string;
 }

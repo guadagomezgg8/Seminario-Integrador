@@ -16,7 +16,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async registerCliente(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto) {
     const usuario = await this.usuarioService.findOneByEmail(registerDto.email);
 
     if (usuario) {
@@ -33,7 +33,7 @@ export class AuthService {
       telefono: registerDto.telefono,
       direccion: registerDto.direccion,
       localidad: registerDto.localidad,
-      rol: 'Cliente',
+      rol: registerDto.rol,
     });
 
     return {
