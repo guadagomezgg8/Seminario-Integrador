@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.c5126bcd.css",
+    "main.js": "/static/js/main.d86e06f9.js",
+    "static/media/FondoInicio.jpg": "/static/media/FondoInicio.3a16aa1b0df1cc3b71a7.jpg",
+    "static/media/canchapelota.jpg": "/static/media/canchapelota.25051451aaf186b560d2.jpg",
+    "index.html": "/index.html",
+    "main.c5126bcd.css.map": "/static/css/main.c5126bcd.css.map",
+    "main.d86e06f9.js.map": "/static/js/main.d86e06f9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c5126bcd.css",
+    "static/js/main.d86e06f9.js"
+  ]
+}

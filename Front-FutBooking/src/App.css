@@ -1,0 +1,57 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html, body {
+  height: 100%; /* Asegura que el body ocupe toda la altura de la pantalla */
+  margin: 0;    /* Elimina el margen por defecto */
+}
+
+#root {
+  max-width: 1280px; /* Mantener el max-width para dispositivos grandes */
+  margin: 0 auto;    /* Centrar horizontalmente */
+  padding: 0;        /* Elimina el padding para ocupar toda la altura */
+  height: 100vh;     /* Ocupa toda la altura de la ventana del navegador */
+  display: flex;     /* Usa flexbox para centrar el contenido */
+  align-items: center; /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  text-align: center; /* Alinea el texto al centro */
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
