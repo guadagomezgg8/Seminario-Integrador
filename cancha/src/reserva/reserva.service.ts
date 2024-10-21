@@ -24,51 +24,75 @@ export class ReservaService {
     private readonly estadoRepository: Repository<Estado>,
   ) {}
 
-  async registrarReserva(
-    usuarioId: number,
+  async create(
     createReservaDto: CreateReservaDto,
+    clienteEmail: string,
   ): Promise<Reserva> {
-    // Verificar que la cancha exista
+    // Obtener la cancha
     const cancha = await this.canchaRepository.findOne({
       where: { id: createReservaDto.canchaId },
-      relations: ['disponibilidades'],
+      relations: ['disponibilidades'], // Asegúrate de incluir las disponibilidades
     });
 
     if (!cancha) {
-      throw new NotFoundException('Cancha no encontrada');
+      throw new BadRequestException('La cancha no existe.');
     }
 
-    // Verificar que la cancha esté disponible en la fecha y hora solicitada
-    const disponibilidad = cancha.disponibilidades.find(
-      (disponibilidad) =>
-        disponibilidad.fecha === createReservaDto.fecha &&
-        disponibilidad.horaInicio <= createReservaDto.horaInicio &&
-        disponibilidad.horaFin >= createReservaDto.horaFin,
+    // Verificar si hay una disponibilidad que coincida con la hora de inicio
+    const disponibilidadIndex = cancha.disponibilidades.findIndex(
+      (d) =>
+        d.horaInicio === createReservaDto.horaInicio &&
+        d.fecha === createReservaDto.fecha,
     );
-    if (!disponibilidad) {
+
+    if (disponibilidadIndex === -1) {
       throw new BadRequestException(
-        'La cancha no está disponible en ese horario',
+        'La cancha no está disponible en ese horario.',
       );
     }
 
-    const cliente = await this.usuarioRepository.findOneBy({ id: usuarioId });
-
-    const estado = await this.estadoRepository.findOneBy({
-      nombre: 'Pendiente',
+    // Obtener el cliente
+    const cliente = await this.usuarioRepository.findOne({
+      where: { email: clienteEmail },
     });
 
-    // Crear una nueva reserva
+    if (!cliente) {
+      throw new BadRequestException('El cliente no existe.');
+    }
+
+    // Obtener el estado 'Pendiente'
+    const estado = await this.estadoRepository.findOne({
+      where: { nombre: 'Pendiente' },
+    });
+
+    // Calcular horaFin sumando 1 hora a horaInicio
+    const horaFin = this.sumarUnaHora(createReservaDto.horaInicio);
+
     const reserva = this.reservaRepository.create({
-      cliente,
-      cancha,
       fecha: createReservaDto.fecha,
       horaInicio: createReservaDto.horaInicio,
-      horaFin: createReservaDto.horaFin,
+      horaFin,
+      cancha,
+      cliente,
       estado,
     });
 
     // Guardar la reserva
-    return await this.reservaRepository.save(reserva);
+    const nuevaReserva = await this.reservaRepository.save(reserva);
+
+    // Eliminar la disponibilidad correspondiente
+    cancha.disponibilidades.splice(disponibilidadIndex, 1);
+
+    // Actualizar la cancha para reflejar el cambio
+    await this.canchaRepository.save(cancha);
+
+    return nuevaReserva;
+  }
+
+  private sumarUnaHora(hora: string): string {
+    const [horas, minutos] = hora.split(':').map(Number);
+    const nuevaHora = (horas + 1) % 24; // Asegúrate de que no supere 24 horas
+    return `${nuevaHora.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
   }
 
   async cancelarReserva(reservaId: number): Promise<void> {
@@ -95,5 +119,15 @@ export class ReservaService {
       where: { cliente: { id: usuarioId } },
       relations: ['cancha', 'estado'],
     });
+  }
+
+  async listarReservasComplejo(complejoId: number): Promise<Reserva[]> {
+    return await this.reservaRepository
+      .createQueryBuilder('reserva')
+      .innerJoinAndSelect('reserva.cancha', 'cancha')
+      .innerJoinAndSelect('cancha.complejo', 'complejo')
+      .where('complejo.id = :complejoId', { complejoId })
+      .andWhere('reserva.estado = :estado', { estado: 'Pendiente' }) // Asegúrate de que 'Pendiente' es un estado definido
+      .getMany();
   }
 }

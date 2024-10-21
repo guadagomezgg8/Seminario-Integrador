@@ -16,9 +16,6 @@ export class Estado extends BaseEntity {
   nombre: string;
 
   @Column()
-  ambito: string;
-
-  @Column()
   descripcion: string;
 
   @OneToMany(() => Reserva, (reserva) => reserva.estado)
