@@ -1,6 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import { Phone } from "lucide-react";
+
+interface Complejo {
+  id: number;
+  nombre: string;
+  telefono: string;
+  imagenUrl: string;
+}
 
 interface Cancha {
   id: number;
@@ -8,17 +16,40 @@ interface Cancha {
   tipo: string;
   precio: number;
   disponibilidades: string[];
-  complejoNombre: string;
+  complejoId: number;
 }
 
-const mockFields: Cancha[] = [
+// Datos de ejemplo para los complejos
+const mockComplejos: Complejo[] = [
+  {
+    id: 1,
+    nombre: "Complejo 1",
+    telefono: "123-456-7890",
+    imagenUrl: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+  },
+  {
+    id: 2,
+    nombre: "Complejo 2",
+    telefono: "098-765-4321",
+    imagenUrl: "https://images.unsplash.com/photo-1459865264687-595d652de67e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+  },
+  {
+    id: 3,
+    nombre: "Complejo 3",
+    telefono: "555-555-5555",
+    imagenUrl: "https://images.unsplash.com/photo-1524015368236-bbf6f72545b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
+  },
+];
+
+// Datos de ejemplo para las canchas
+const mockCanchas: Cancha[] = [
   {
     id: 1,
     nombre: "Cancha A",
     tipo: "Fútbol 5",
     precio: 50,
     disponibilidades: ["10:00", "12:00", "14:00"],
-    complejoNombre: "Complejo 1",
+    complejoId: 1,
   },
   {
     id: 2,
@@ -26,7 +57,7 @@ const mockFields: Cancha[] = [
     tipo: "Fútbol 7",
     precio: 70,
     disponibilidades: ["11:00", "13:00", "15:00"],
-    complejoNombre: "Complejo 2",
+    complejoId: 2,
   },
   {
     id: 3,
@@ -34,7 +65,7 @@ const mockFields: Cancha[] = [
     tipo: "Fútbol 11",
     precio: 100,
     disponibilidades: ["16:00", "18:00", "20:00"],
-    complejoNombre: "Complejo 3",
+    complejoId: 3,
   },
 ];
 
@@ -43,16 +74,28 @@ export default function FieldSearch() {
   const navigate = useNavigate();
   const complexId = searchParams.get("complexId");
 
-  const [fields, setFields] = useState<Cancha[]>(mockFields);
+  const [fields, setFields] = useState<Cancha[]>(mockCanchas);
+  const [complejos, setComplejos] = useState<Complejo[]>(mockComplejos);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedType, setSelectedType] = useState("");
-  const [selectedTime, setSelectedTime] = useState<{ [key: number]: string }>(
-    {}
-  );
+  const [selectedTime, setSelectedTime] = useState<{ [key: number]: string }>({});
+
+  useEffect(() => {
+    // Aquí normalmente harías una llamada a la API para obtener los datos reales
+    // Por ahora, usamos los datos de ejemplo
+    if (complexId) {
+      const filteredFields = mockCanchas.filter(
+        (cancha) => cancha.complejoId === parseInt(complexId)
+      );
+      setFields(filteredFields);
+    } else {
+      setFields(mockCanchas);
+    }
+  }, [complexId]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const filteredFields = mockFields.filter((field) =>
+    const filteredFields = mockCanchas.filter((field) =>
       field.tipo.toLowerCase().includes(selectedType.toLowerCase())
     );
     setFields(filteredFields);
@@ -82,10 +125,11 @@ export default function FieldSearch() {
               onClick={() => {
                 const field = fields.find((f) => f.id === fieldId);
                 if (field) {
+                  const complejo = complejos.find((c) => c.id === field.complejoId);
                   const newBooking = {
                     id: Date.now(),
                     fieldName: field.nombre,
-                    complexName: field.complejoNombre,
+                    complexName: complejo ? complejo.nombre : "Desconocido",
                     date: selectedDate,
                     time: selectedTime[fieldId],
                     price: field.precio,
@@ -122,10 +166,10 @@ export default function FieldSearch() {
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 py-8">
       <Toaster position="top-center" reverseOrder={false} />
-      <h2 className="text-2xl font-bold mb-4 text-black">
-        Buscar Canchas {complexId ? `en Complejo ${complexId}` : ""}
+      <h2 className="text-3xl font-bold mb-6 text-center text-black">
+        Buscar Canchas {complexId ? `en ${complejos.find(c => c.id === parseInt(complexId))?.nombre}` : ""}
       </h2>
       <form onSubmit={handleSearch} className="mb-8">
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
@@ -153,57 +197,73 @@ export default function FieldSearch() {
           </button>
         </div>
       </form>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {fields.map((field) => (
-          <div key={field.id} className="bg-white shadow-md rounded-lg p-4">
-            <h3 className="text-xl font-semibold mb-2 text-black">
-              {field.nombre}
-            </h3>
-            <p className="text-gray-600 mb-2">{field.tipo}</p>
-            <p className="text-green-600 font-bold mb-2">
-              ${field.precio}/hora
-            </p>
-            <p className="text-gray-500 mb-2">
-              Complejo: {field.complejoNombre}
-            </p>
-            <div className="mb-4">
-              <p className="font-semibold mb-1 text-black">
-                Horarios disponibles:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {field.disponibilidades.map((time) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {fields.map((field) => {
+          const complejo = complejos.find((c) => c.id === field.complejoId);
+          return (
+            <div key={field.id} className="bg-white shadow-xl rounded-lg overflow-hidden">
+              <img 
+                src={complejo?.imagenUrl || "https://via.placeholder.com/400x200"}
+                alt={complejo?.nombre || "Complejo deportivo"}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6">
+                <h3 className="text-xl font-semibold mb-2 text-black">
+                  {field.nombre}
+                </h3>
+                <p className="text-gray-600 mb-2">{field.tipo}</p>
+                <p className="text-green-600 font-bold mb-2">
+                  ${field.precio}/hora
+                </p>
+                <p className="text-gray-500 mb-2 flex items-center">
+                  Complejo: {complejo?.nombre}
+                </p>
+                {complejo && (
+                  <p className="text-gray-500 mb-4 flex items-center">
+                    <Phone size={16} className="mr-2" />
+                    {complejo.telefono}
+                  </p>
+                )}
+                <div className="mb-4">
+                  <p className="font-semibold mb-1 text-black">
+                    Horarios disponibles:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {field.disponibilidades.map((time) => (
+                      <button
+                        key={time}
+                        className={`px-3 py-1 text-sm rounded-full ${
+                          selectedTime[field.id] === time
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                        }`}
+                        onClick={() =>
+                          setSelectedTime((prev) => ({ ...prev, [field.id]: time }))
+                        }
+                      >
+                        {time}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex space-x-2">
                   <button
-                    key={time}
-                    className={`px-3 py-1 text-sm rounded-full ${
-                      selectedTime[field.id] === time
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-200"
-                    }`}
-                    onClick={() =>
-                      setSelectedTime((prev) => ({ ...prev, [field.id]: time }))
-                    }
+                    onClick={() => handleReserve(field.id)}
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300"
                   >
-                    {time}
+                    Reservar
                   </button>
-                ))}
+                  <Link
+                    to={`/field-details/${field.id}`}
+                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 text-center"
+                  >
+                    Ver Detalles
+                  </Link>
+                </div>
               </div>
             </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => handleReserve(field.id)}
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
-              >
-                Reservar
-              </button>
-              <Link
-                to={`/field-details/${field.id}`}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm"
-              >
-                Ver Detalles
-              </Link>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
