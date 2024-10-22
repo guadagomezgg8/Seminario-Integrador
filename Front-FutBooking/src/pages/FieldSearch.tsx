@@ -1,96 +1,132 @@
-import { useState } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { toast, Toaster } from 'react-hot-toast';
+import { useState } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
 
-interface Field {
+interface Cancha {
   id: number;
-  name: string;
-  type: string;
-  price: number;
-  availableTimes: string[];
-  complexName: string;
+  nombre: string;
+  tipo: string;
+  precio: number;
+  disponibilidades: string[];
+  complejoNombre: string;
 }
 
-const mockFields: Field[] = [
-  { id: 1, name: "Cancha A", type: "Fútbol 5", price: 50, availableTimes: ["10:00", "12:00", "14:00"], complexName: "Complejo 1" },
-  { id: 2, name: "Cancha B", type: "Fútbol 7", price: 70, availableTimes: ["11:00", "13:00", "15:00"], complexName: "Complejo 2" },
-  { id: 3, name: "Cancha C", type: "Fútbol 11", price: 100, availableTimes: ["16:00", "18:00", "20:00"], complexName: "Complejo 3" },
+const mockFields: Cancha[] = [
+  {
+    id: 1,
+    nombre: "Cancha A",
+    tipo: "Fútbol 5",
+    precio: 50,
+    disponibilidades: ["10:00", "12:00", "14:00"],
+    complejoNombre: "Complejo 1",
+  },
+  {
+    id: 2,
+    nombre: "Cancha B",
+    tipo: "Fútbol 7",
+    precio: 70,
+    disponibilidades: ["11:00", "13:00", "15:00"],
+    complejoNombre: "Complejo 2",
+  },
+  {
+    id: 3,
+    nombre: "Cancha C",
+    tipo: "Fútbol 11",
+    precio: 100,
+    disponibilidades: ["16:00", "18:00", "20:00"],
+    complejoNombre: "Complejo 3",
+  },
 ];
 
 export default function FieldSearch() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const complexId = searchParams.get('complexId');
-  
-  const [fields, setFields] = useState<Field[]>(mockFields);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedType, setSelectedType] = useState('');
-  const [selectedTime, setSelectedTime] = useState<{ [key: number]: string }>({});
+  const complexId = searchParams.get("complexId");
+
+  const [fields, setFields] = useState<Cancha[]>(mockFields);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedTime, setSelectedTime] = useState<{ [key: number]: string }>(
+    {}
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const filteredFields = mockFields.filter(
-      field => field.type.toLowerCase().includes(selectedType.toLowerCase())
+    const filteredFields = mockFields.filter((field) =>
+      field.tipo.toLowerCase().includes(selectedType.toLowerCase())
     );
     setFields(filteredFields);
   };
 
   const handleReserve = (fieldId: number) => {
     if (!selectedTime[fieldId]) {
-      toast.error('Por favor, selecciona un horario antes de reservar.');
+      toast.error("Por favor, selecciona un horario antes de reservar.");
       return;
     }
 
     if (!selectedDate) {
-      toast.error('Por favor, selecciona una fecha antes de reservar.');
+      toast.error("Por favor, selecciona una fecha antes de reservar.");
       return;
     }
 
-    toast((t) => (
-      <div>
-        <p>¿Confirmas la reserva para el {selectedDate} a las {selectedTime[fieldId]}?</p>
-        <div className="flex justify-between mt-4">
-          <button
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm"
-            onClick={() => {
-              const field = fields.find(f => f.id === fieldId);
-              if (field) {
-                const newBooking = {
-                  id: Date.now(),
-                  fieldName: field.name,
-                  complexName: field.complexName,
-                  date: selectedDate,
-                  time: selectedTime[fieldId],
-                  price: field.price
-                };
-                // Aquí normalmente enviarías la reserva al backend
-                // Por ahora, simularemos guardando en localStorage
-                const existingBookings = JSON.parse(localStorage.getItem('bookings') || '[]');
-                localStorage.setItem('bookings', JSON.stringify([...existingBookings, newBooking]));
-                
-                toast.dismiss(t.id);
-                toast.success('¡Reserva registrada!');
-                navigate('/my-bookings');
-              }
-            }}
-          >
-            Confirmar
-          </button>
-          <button
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm"
-            onClick={() => toast.dismiss(t.id)}
-          >
-            Cancelar
-          </button>
+    toast(
+      (t) => (
+        <div>
+          <p>
+            ¿Confirmas la reserva para el {selectedDate} a las{" "}
+            {selectedTime[fieldId]}?
+          </p>
+          <div className="flex justify-between mt-4">
+            <button
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm"
+              onClick={() => {
+                const field = fields.find((f) => f.id === fieldId);
+                if (field) {
+                  const newBooking = {
+                    id: Date.now(),
+                    fieldName: field.nombre,
+                    complexName: field.complejoNombre,
+                    date: selectedDate,
+                    time: selectedTime[fieldId],
+                    price: field.precio,
+                  };
+                  // Aquí normalmente enviarías la reserva al backend
+                  // Por ahora, simularemos guardando en localStorage
+                  const existingBookings = JSON.parse(
+                    localStorage.getItem("bookings") || "[]"
+                  );
+                  localStorage.setItem(
+                    "bookings",
+                    JSON.stringify([...existingBookings, newBooking])
+                  );
+
+                  toast.dismiss(t.id);
+                  toast.success("¡Reserva registrada!");
+                  navigate("/my-bookings");
+                }
+              }}
+            >
+              Confirmar
+            </button>
+            <button
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded text-sm"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancelar
+            </button>
+          </div>
         </div>
-      </div>
-    ), { duration: 10000 });
+      ),
+      { duration: 10000 }
+    );
   };
 
   return (
     <div className="container mx-auto px-4">
       <Toaster position="top-center" reverseOrder={false} />
-      <h2 className="text-2xl font-bold mb-4 text-black">Buscar Canchas {complexId ? `en Complejo ${complexId}` : ''}</h2>
+      <h2 className="text-2xl font-bold mb-4 text-black">
+        Buscar Canchas {complexId ? `en Complejo ${complexId}` : ""}
+      </h2>
       <form onSubmit={handleSearch} className="mb-8">
         <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
           <input
@@ -118,20 +154,34 @@ export default function FieldSearch() {
         </div>
       </form>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {fields.map(field => (
+        {fields.map((field) => (
           <div key={field.id} className="bg-white shadow-md rounded-lg p-4">
-            <h3 className="text-xl font-semibold mb-2 text-black">{field.name}</h3>
-            <p className="text-gray-600 mb-2">{field.type}</p>
-            <p className="text-green-600 font-bold mb-2">${field.price}/hora</p>
-            <p className="text-gray-500 mb-2">Complejo: {field.complexName}</p>
+            <h3 className="text-xl font-semibold mb-2 text-black">
+              {field.nombre}
+            </h3>
+            <p className="text-gray-600 mb-2">{field.tipo}</p>
+            <p className="text-green-600 font-bold mb-2">
+              ${field.precio}/hora
+            </p>
+            <p className="text-gray-500 mb-2">
+              Complejo: {field.complejoNombre}
+            </p>
             <div className="mb-4">
-              <p className="font-semibold mb-1 text-black">Horarios disponibles:</p>
+              <p className="font-semibold mb-1 text-black">
+                Horarios disponibles:
+              </p>
               <div className="flex flex-wrap gap-2">
-                {field.availableTimes.map(time => (
+                {field.disponibilidades.map((time) => (
                   <button
                     key={time}
-                    className={`px-3 py-1 text-sm rounded-full ${selectedTime[field.id] === time ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-                    onClick={() => setSelectedTime(prev => ({ ...prev, [field.id]: time }))}
+                    className={`px-3 py-1 text-sm rounded-full ${
+                      selectedTime[field.id] === time
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200"
+                    }`}
+                    onClick={() =>
+                      setSelectedTime((prev) => ({ ...prev, [field.id]: time }))
+                    }
                   >
                     {time}
                   </button>

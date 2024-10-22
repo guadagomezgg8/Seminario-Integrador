@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateComplejoDto } from './dto/create-complejo.dto';
 import { UpdateComplejoDto } from './dto/update-complejo.dto';
 import { Complejo } from 'src/entities/complejo.entity';
@@ -8,7 +12,6 @@ import { Localidad } from 'src/entities/localidad.entity';
 
 @Injectable()
 export class ComplejoService {
-
   constructor(
     @InjectRepository(Complejo)
     private readonly complejoRepository: Repository<Complejo>,
@@ -17,7 +20,9 @@ export class ComplejoService {
   ) {}
 
   async create(createComplejoDto: CreateComplejoDto): Promise<Complejo> {
-    const localidad = await this.localidadRepository.findOneBy({nombre:createComplejoDto.localidad});
+    const localidad = await this.localidadRepository.findOneBy({
+      nombre: createComplejoDto.localidad,
+    });
     const complejo = this.complejoRepository.create({
       ...createComplejoDto,
       localidad,
@@ -26,22 +31,36 @@ export class ComplejoService {
   }
 
   async findAll(): Promise<Complejo[]> {
-    return await this.complejoRepository.find();
+    return await this.complejoRepository.find({
+      relations: ['localidad', 'canchas'],
+    });
   }
 
   async findOne(id: number): Promise<Complejo> {
-    return await this.complejoRepository.findOne({where: {id}, relations: ['canchas']});
+    const complejo = await this.complejoRepository.findOne({
+      where: { id },
+      relations: ['localidad', 'canchas'],
+    });
+    if (!complejo) {
+      throw new NotFoundException('El complejo no existe');
+    }
+    return complejo;
   }
 
-  async update(id: number, updateComplejoDto: UpdateComplejoDto): Promise<Complejo> {
-    const complejo = await this.complejoRepository.findOneBy({id});
+  async update(
+    id: number,
+    updateComplejoDto: UpdateComplejoDto,
+  ): Promise<Complejo> {
+    const complejo = await this.complejoRepository.findOneBy({ id });
     if (!complejo) {
       throw new NotFoundException('Complejo no encontrado');
     }
 
     // Filtrar las propiedades del DTO que están definidas
     const camposActualizables = Object.fromEntries(
-      Object.entries(updateComplejoDto).filter(([_, value]) => value !== undefined)
+      Object.entries(updateComplejoDto).filter(
+        ([_, value]) => value !== undefined,
+      ),
     );
 
     // Si no hay campos para actualizar, lanzar una excepción
@@ -53,11 +72,11 @@ export class ComplejoService {
     await this.complejoRepository.update(id, camposActualizables);
 
     // Retorna el ejercicio actualizado
-    return await this.complejoRepository.findOneBy({id});
+    return await this.complejoRepository.findOneBy({ id });
   }
 
   async remove(id: number): Promise<void> {
-    const complejo = await this.complejoRepository.findOneBy({id});
+    const complejo = await this.complejoRepository.findOneBy({ id });
     await this.complejoRepository.remove(complejo);
   }
 }
