@@ -110,7 +110,7 @@ export default function Register() {
                 className="bg-white border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                 id="email"
                 type="email"
-                placeholder="tu@email.com"
+                placeholder="example@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

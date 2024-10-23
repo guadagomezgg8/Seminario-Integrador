@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
-import { Search, Calendar } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import { Link } from "react-router-dom";
+import { Search, Calendar } from "lucide-react";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
   return (
@@ -11,20 +11,23 @@ export default function Home() {
           <div className="md:flex">
             <div className="md:w-1/2 p-8">
               <h2 className="text-4xl font-bold mb-2">Bienvenido a</h2>
-              <h2 className="text-4xl font-bold text-blue-600 mb-4">Futbooking</h2>
+              <h2 className="text-4xl font-bold text-blue-600 mb-4">
+                Futbooking
+              </h2>
               <p className="text-gray-600 mb-8">
-                Reserva las mejores canchas de fútbol en tu área con facilidad y rapidez.
+                Reserva las mejores canchas de fútbol en tu área con facilidad y
+                rapidez.
               </p>
               <div className="space-y-4">
                 <Link
-                  to="/buscar-complejos"
+                  to="/complex-search"
                   className="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 ease-in-out flex items-center justify-center"
                 >
                   <Search className="mr-2 h-5 w-5" />
                   Buscar Complejos
                 </Link>
                 <Link
-                  to="/reservar-canchas"
+                  to="/field-search"
                   className="block w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 ease-in-out flex items-center justify-center"
                 >
                   <Calendar className="mr-2 h-5 w-5" />
@@ -40,7 +43,7 @@ export default function Home() {
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <p className="text-white text-2xl font-bold px-4 text-center">
-                  Tu próximo partido está a un clic de distancia
+                  Tu próximo partido está a un click de distancia
                 </p>
               </div>
             </div>
